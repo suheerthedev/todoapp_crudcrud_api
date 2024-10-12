@@ -8,7 +8,7 @@ class TodoService {
   final String todoEndPoint = "todos";
 
   Future<List<TodoModel>> fetchTodos()async{
-    final url = Uri.parse(baseUrl);
+    final url = Uri.parse("$baseUrl/$apiKey/$todoEndPoint");
     final response = await http.get(url);
     final responseBody = jsonDecode(response.body);
 
@@ -22,5 +22,20 @@ class TodoService {
     }else{
       throw Exception("Failed To Fetch Tasks");
     }
+  }
+
+  Future createTodo(TodoModel todo) async{
+    var url = Uri.parse("$baseUrl/$apiKey/$todoEndPoint");
+    var response = await http.post(
+      url, 
+      headers: {"Content-Type": "application/json"},
+
+      body: jsonEncode(todo.toJson()),
+      );
+
+      if(response.statusCode == 201){
+        throw Exception("Failed to create task");
+      }
+    print('Response body: ${response.body}');
   }
 }
